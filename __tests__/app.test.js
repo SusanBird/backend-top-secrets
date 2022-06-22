@@ -40,12 +40,12 @@ describe('top-secret routes', () => {
     });
   });
 
-  it('signs in a user', async () => {
-    const res = await request(app).post('/api/v1/users')
-      .send(mockUser);
-    const { firstName, lastName, email } = mockUser;
-    expect(res.body).toEqual({ message: 'Signed in successfully!' });
-  });
+  // it('signs in a user', async () => {
+  //   const res = await request(app).post('/api/v1/users')
+  //     .send(mockUser);
+  //   const { firstName, lastName, email } = mockUser;
+  //   expect(res.body).toEqual({ message: 'Signed in successfully!' });
+  // });
 
 
   // it('signs in a user', async () => {
