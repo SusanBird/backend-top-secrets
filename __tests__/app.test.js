@@ -32,7 +32,7 @@ describe('top-secret routes', () => {
     const res = await request(app).post('/api/v1/users')
       .send(mockUser);
     const { firstName, lastName, email } = mockUser;
-    expect(res.bosy).toEqual({
+    expect(res.body).toEqual({
       id: expect.any(String),
       firstName,
       lastName,
