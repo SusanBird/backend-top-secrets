@@ -49,8 +49,7 @@ describe('top-secret routes', () => {
 
   it('logs out a user', async () => {
     const res = await request(app)
-      .post('/api/v1/users/sessions')
-      .send(mockUser);
+      .delete('/api/v1/users/sessions');
     expect(res.status).toEqual(200);
   });
 
