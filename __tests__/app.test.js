@@ -27,7 +27,6 @@ describe('top-secret routes', () => {
     return setup(pool);
   });
 
-
   it('creates a new user', async () => {
     const res = await request(app).post('/api/v1/users')
       .send(mockUser);
@@ -51,6 +50,7 @@ describe('top-secret routes', () => {
     const res = await request(app)
       .delete('/api/v1/users/sessions');
     expect(res.status).toEqual(200);
+    expect(res.body.message).toBe('Signed out successfully!');
   });
 
 
