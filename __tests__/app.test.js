@@ -5,22 +5,20 @@ const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
 
 const mockUser = {
-  firstName: 'Test',
-  lastName: 'User',
   email: 'test@example.com',
   password: '12345',
 };
 
-// const registerAndLogin = async (userProps = {}) => {
-//   const password = userProps.password ?? mockUser.password;
+const registerAndLogin = async (userProps = {}) => {
+  const password = userProps.password ?? mockUser.password;
 
-//   const agent = request.agent(app);
-//   const user = await UserService.create({ ...mockUser, ...userProps });
+  const agent = request.agent(app);
+  const user = await UserService.create({ ...mockUser, ...userProps });
 
-//   const { email } = user;
-//   await agent.post('/api/v1/users/sessions').send({ email, password });
-//   return [agent, user];
-// };
+  const { email } = user;
+  await agent.post('/api/v1/users/sessions').send({ email, password });
+  return [agent, user];
+};
 
 describe('top-secret routes', () => {
   beforeEach(() => {
@@ -30,16 +28,15 @@ describe('top-secret routes', () => {
   it('creates a new user', async () => {
     const res = await request(app).post('/api/v1/users')
       .send(mockUser);
-    const { firstName, lastName, email } = mockUser;
+    const { email } = mockUser;
     expect(res.body).toEqual({
       id: expect.any(String),
-      firstName,
-      lastName,
       email,
     });
   });
 
   it('signs in a user', async () => {
+    await request(app).post('/api/v1/users').send(mockUser);
     const res = await request(app)
       .post('/api/v1/users/sessions')
       .send(mockUser);
@@ -53,12 +50,15 @@ describe('top-secret routes', () => {
     expect(res.body.message).toBe('Signed out successfully!');
   });
 
-  it('returns a list of secrets for logged in user', async() => {
-    const agent = request.agent(app);
-    const expected = 'Secret 1';
-    res = await agent.get('/api/v1/secrets');
-    expect(res.status).toEqual(401);
-    expect(res.body[0].title).toEqual(expected);
+  it('returns a list of secrets for logged in user', async () => {
+    const [agent] = await registerAndLogin();
+    const res = await agent.get('/api/v1/secrets');
+
+    expect(res.body[0]).toEqual({
+      title: 'Secret 1',
+      description: 'Top secret information',
+      created_at: expect.any(String),
+    });
   });
 
 
