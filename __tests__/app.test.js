@@ -47,6 +47,13 @@ describe('top-secret routes', () => {
     expect(res.status).toEqual(200);
   });
 
+  it('logs out a user', async () => {
+    const res = await request(app)
+      .post('/api/v1/users/sessions')
+      .send(mockUser);
+    expect(res.status).toEqual(200);
+  });
+
 
   // it('signs in a user', async () => {
   //   const [agent, user] = await registerAndLogin();
