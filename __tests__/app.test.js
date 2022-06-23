@@ -53,6 +53,32 @@ describe('top-secret routes', () => {
     expect(res.body.message).toBe('Signed out successfully!');
   });
 
+  it('returns a list of secrets for logged in user', async() => {
+    const agent = request.agent(app);
+    const expected = 'Secret 1';
+    res = await agent.get('/api/v1/secrets');
+    expect(res.status).toEqual(401);
+    expect(res.body[0].title).toEqual(expected);
+  });
+
+
+  // it('should return a 403 when signed in but not admin and listing all users', async () => {
+  //   const [agent] = await registerAndLogin();
+  //   const res = await agent.get('/api/v1/users');
+
+  //   expect(res.body).toEqual({
+  //     message: 'You do not have access to view this page',
+  //     status: 403,
+  //   });
+  // });
+
+  // it('should return a list of users if signed in as admin', async () => {
+  //   const [agent, user] = await registerAndLogin({ email: 'admin' });
+  //   const res = await agent.get('/api/v1/users');
+
+  //   expect(res.body).toEqual([{ ...user }]);
+  // });
+
 
   // it('signs in a user', async () => {
   //   const [agent, user] = await registerAndLogin();
