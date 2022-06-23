@@ -11,14 +11,13 @@ const mockUser = {
 
 const registerAndLogin = async (userProps = {}) => {
   const password = userProps.password ?? mockUser.password;
-
   const agent = request.agent(app);
   const user = await UserService.create({ ...mockUser, ...userProps });
 
   const { email } = user;
   await agent.post('/api/v1/users/sessions').send({ email, password });
   return [agent, user];
-};
+}
 
 describe('top-secret routes', () => {
   beforeEach(() => {
@@ -33,7 +32,7 @@ describe('top-secret routes', () => {
       id: expect.any(String),
       email,
     });
-  });
+  })
 
   it('signs in a user', async () => {
     await request(app).post('/api/v1/users').send(mockUser);
@@ -41,14 +40,14 @@ describe('top-secret routes', () => {
       .post('/api/v1/users/sessions')
       .send(mockUser);
     expect(res.status).toEqual(200);
-  });
+  })
 
   it('logs out a user', async () => {
     const res = await request(app)
       .delete('/api/v1/users/sessions');
     expect(res.status).toEqual(200);
     expect(res.body.message).toBe('Signed out successfully!');
-  });
+  })
 
   it('returns a list of secrets for logged in user', async () => {
     const [agent] = await registerAndLogin();
@@ -59,7 +58,29 @@ describe('top-secret routes', () => {
       description: 'Top secret information',
       created_at: expect.any(String),
     });
+  })
+
+  it('logged in user can create new secrets', async () => {
+    const [agent] = await registerAndLogin();
+    const res = await agent.post('/api/v1/secrets').send({
+      title: 'Secret 1',
+      description: 'Top secret information',
+    });
+    expect(res.status).toEqual(200);
   });
+
+  afterAll(() => {
+    pool.end();
+  });
+});
+
+
+
+
+
+
+
+
 
 
   // it('should return a 403 when signed in but not admin and listing all users', async () => {
@@ -90,8 +111,3 @@ describe('top-secret routes', () => {
   //     iat: expect.any(Number),
   //   });
   // });
-
-  afterAll(() => {
-    pool.end();
-  });
-});
